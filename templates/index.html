@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>G201210558</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <body>
+    <div class="centered-div">
+      <div class="title-container">
+        <span class="main-title">Menü</span>
+        <div class="button-container">
+          <button class="styled-button" onclick="toggleAddForm()">Ekle</button>
+        </div>
+      </div>
+      <div id="add-form" class="add-form">
+        <form method="post" action="{% url 'create_item' %}">
+          {% csrf_token %}
+          <input
+            type="text"
+            name="item_name"
+            placeholder="Item Name"
+            required
+          />
+          <input type="text" name="image" placeholder="Image URL" required />
+          <input
+            type="text"
+            name="ingredients"
+            placeholder="Ingredients"
+            required
+          />
+          <input type="number" name="price" placeholder="Price" required />
+          <button class="styled-button" type="submit">Add Item</button>
+        </form>
+      </div>
+      <div style="width: 100%; height: 1000px; margin-top: 20px">
+        {% for item in items %}
+        <div class="menu" style="margin-top: 30px">
+          <div class="image">
+            <img src="{% static item.image %}" />
+          </div>
+          <div class="description">
+            {{item.item_name}}
+            <ul>
+              {{ item.ingredients | safe }}
+            </ul>
+            <span class="price">{{item.price}}$</span>
+            <div class="button-container">
+              <button
+                class="styled-button"
+                onclick="toggleUpdateForm(event, '{{ item.id }}')"
+              >
+                Güncelle
+              </button>
+              <form method="post" action="{% url 'delete_item' item.id %}">
+                {% csrf_token %}
+                <button class="styled-button" type="submit">Sil</button>
+              </form>
+            </div>
+            <div id="update-form-{{ item.id }}" class="update-form">
+              <form method="post" action="{% url 'update_item' item.id %}">
+                {% csrf_token %}
+                <input
+                  type="text"
+                  name="item_name"
+                  placeholder="New Item Name"
+                  value="{{ item.item_name }}"
+                  required
+                />
+                <input
+                  type="text"
+                  name="image"
+                  placeholder="New Image URL"
+                  value="{{ item.image }}"
+                  required
+                />
+                <input
+                  type="text"
+                  name="ingredients"
+                  placeholder="New Ingredients"
+                  value="{{ item.ingredients }}"
+                  required
+                />
+                <input
+                  type="number"
+                  name="price"
+                  placeholder="New Price"
+                  value="{{ item.price }}"
+                  required
+                />
+                <button class="styled-button" type="submit">Kaydet</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="footer">
+      <footer>Fuad Garibli | G201210558 | Bulut Bilişim Ödevi</footer>
+    </div>
+    <script>
+      function toggleUpdateForm(event, itemId) {
+        var form = document.getElementById('update-form-' + itemId)
+        if (form.style.display === 'none') {
+          form.style.display = 'block'
+        } else {
+          form.style.display = 'none'
+        }
+      }
+
+      function toggleAddForm() {
+        var form = document.getElementById('add-form')
+        if (form.style.display === 'none') {
+          form.style.display = 'block'
+        } else {
+          form.style.display = 'none'
+        }
+      }
+    </script>
+  </body>
+</html>
